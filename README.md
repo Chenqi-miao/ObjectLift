@@ -2,9 +2,11 @@
 
 从图片中发现、选择物体，生成可下载的 3D 素材。
 
-当前处于环境验证阶段，尚未完成可运行原型。范围和验收以 [需求文档](docs/PRD.md) 为准；实测结果见 [开发日志](docs/DEVELOPMENT.md)。
+本地 Web 图片工作台已可运行；自动检测、去背景和真实 3D 生成尚未接入。范围和验收以 [需求文档](docs/PRD.md) 为准；实测结果见 [开发日志](docs/DEVELOPMENT.md)。
 
-图片处理模块已实现并通过 8 项单元测试，接口及测试命令见 [图片处理说明](docs/IMAGE_PROCESSING.md)。使用 Python 3.12 和 Pillow 12.3.0，可独立于模型运行。
+图片处理模块已实现，接口见 [图片处理说明](docs/IMAGE_PROCESSING.md)。当前 Web 环境使用 Python 3.12、Pillow 11.3.0 和 Gradio 5.50.0，可独立于模型运行。
+
+启动：`.\scripts\start.ps1`，浏览器访问 http://127.0.0.1:7860 。安装和 Docker 使用见 [Web 说明](docs/WEB.md)。
 
 预定流程：YOLO11n（CPU）→ 裁剪 → rembg（CPU）→ TripoSR（GPU 独立进程）→ GLB 预览和下载。
 

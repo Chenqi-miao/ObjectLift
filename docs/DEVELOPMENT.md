@@ -39,6 +39,17 @@
 
 ## 课程证据管理
 
+### Web 前后端原型阶段
+
+- 新增 Gradio 四步页面：上传、坐标裁剪、透明前景校验、3D 状态说明；实现 PNG 和 JSON 下载。
+- 后端使用独立 UUID 目录保存处理快照，manifest 保存父任务关系，避免覆盖历史文件。
+- 修改裁剪参数、上传新图及失败时清除旧的下游结果。自动检测、去背景、3D 按钮尚未启用。
+- 新增启动脚本、Dockerfile、compose.yaml；容器绑定 localhost，持久化 jobs。
+- Gradio 5.50.0 要求 Pillow <12，调整为 Pillow 11.3.0 后全量 11 项测试通过（0.689 秒）。
+- 本地 HTTP 首页与配置已验证；scripts/smoke_web.py 实际上传→会话状态→裁剪→下载 PNG 通过。
+- 系统代理会影响 localhost 检查，测试客户端使用 trust_env=False；已修复测试客户端 GBK 终端输出问题。
+- 服务地址 http://127.0.0.1:7860 。未完成浏览器视觉检查、Docker 构建验证和真实模型端到端验收。
+
 ### 离线图片处理开发
 
 - 新增 services/image_io.py：JPG/PNG 读取、EXIF 修正、像素限制、缩放、透明度保留、裁剪与检测 RGB 合成。

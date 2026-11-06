@@ -29,3 +29,5 @@ uv pip install --python .venv/Scripts/python.exe -r requirements-image.txt
 测试用例自行生成小图片，不下载模型或测试素材。覆盖 EXIF、尺寸限制、调色板透明度、损坏和格式伪装、裁剪越界、边距、非有限框、透明背景合成与空前景。
 
 2026-11-06 实测：Windows Python 3.12.12 + Pillow 12.3.0，以上 8 项测试全部通过（0.366 秒）。测试使用生成的小图片，真实用户图片与 UI 接入仍需集成验收。
+
+Web 接入后，为兼容 Gradio 5.50.0，将 Pillow 固定为 11.3.0；全量 11 项测试及 HTTP 上传裁剪下载冒烟测试已通过。

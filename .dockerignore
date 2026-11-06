@@ -4,3 +4,4 @@ vendor
 jobs
 models
 __pycache__
+.uv-cache
