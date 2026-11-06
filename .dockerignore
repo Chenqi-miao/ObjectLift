@@ -1,0 +1,6 @@
+.git
+.venv
+vendor
+jobs
+models
+__pycache__
