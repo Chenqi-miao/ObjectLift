@@ -47,5 +47,14 @@ class JinaEncoder:
         image = detection_rgb(load_image(path))
         return self.load().encode_image([image], batch_size=1)[0]
 
+    def unload(self):
+        if self.model is not None:
+            self.model = None
+            import gc
+            import torch
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
     def text(self, query):
         return self.load().encode_text([query])[0]

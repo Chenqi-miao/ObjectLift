@@ -50,8 +50,14 @@ class Library:
                 CREATE INDEX IF NOT EXISTS asset_filters ON assets(media_type,status);
                 CREATE INDEX IF NOT EXISTS item_asset ON visual_items(asset_id);
                 CREATE INDEX IF NOT EXISTS tag_name ON tags(name);
+                CREATE TABLE IF NOT EXISTS video_descriptions (
+                    asset_id TEXT PRIMARY KEY REFERENCES assets(id), status TEXT NOT NULL,
+                    caption TEXT, model TEXT, revision TEXT, timestamps TEXT, error TEXT,
+                    updated_at TEXT NOT NULL
+                );
                 PRAGMA user_version=1;
             ''')
+            db.execute("INSERT OR IGNORE INTO tags (visual_item_id,name,source) SELECT v.id,'未分类','auto' FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE a.media_type='image' AND v.caption_status='ready' AND NOT EXISTS (SELECT 1 FROM tags t WHERE t.visual_item_id=v.id)")
 
     @contextmanager
     def connection(self):
@@ -78,15 +84,29 @@ class Library:
             searchable = db.execute("SELECT count(DISTINCT asset_id) FROM visual_items WHERE embedding_status='ready'").fetchone()[0]
         return {'total': sum(counts.values()), 'searchable': searchable, **counts}
 
+    def image_diagnostics(self):
+        with self.connection() as db:
+            rows = [dict(r) for r in db.execute("SELECT a.id, a.original_name, v.id AS visual_item_id, v.preview_path, v.caption, v.caption_status, v.embedding_status, v.embedding_model, v.embedding_revision, v.error_message FROM assets a JOIN visual_items v ON a.id=v.asset_id WHERE a.media_type='image' ORDER BY a.created_at DESC, a.id")]
+            tags = {}
+            for row in db.execute('SELECT visual_item_id,name FROM tags ORDER BY name'):
+                tags.setdefault(row[0], []).append(row[1])
+        for row in rows:
+            row['tags'] = tags.get(row['visual_item_id'], [])
+        return rows
+
     def get_asset(self, asset_id):
         with self.connection() as db:
             row = db.execute('SELECT * FROM assets WHERE id=?', (asset_id,)).fetchone()
             if row is None:
                 raise KeyError(asset_id)
             result = dict(row)
+            description = db.execute('SELECT * FROM video_descriptions WHERE asset_id=?', (asset_id,)).fetchone()
+            result['description'] = dict(description) if description else None
             result['items'] = [dict(item) for item in db.execute(
                 'SELECT * FROM visual_items WHERE asset_id=? ORDER BY sample_index',
                 (asset_id,))]
+            for item in result['items']:
+                item['tags'] = [r[0] for r in db.execute('SELECT name FROM tags WHERE visual_item_id=? ORDER BY name', (item['id'],))]
             return result
 
     def import_files(self, paths):
@@ -187,6 +207,7 @@ class Library:
     def recover_interrupted(self):
         """Call once at worker startup, never while another worker is indexing."""
         with self.connection() as db:
+            db.execute("UPDATE video_descriptions SET status='failed', error='上次描述任务中断，请重试。' WHERE status='processing'")
             for column in ('caption_status', 'embedding_status'):
                 db.execute(f"UPDATE visual_items SET {column}='pending' "
                            f"WHERE {column}='processing'")

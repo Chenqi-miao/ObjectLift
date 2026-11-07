@@ -71,6 +71,18 @@ class VideoTests(unittest.TestCase):
             reopened = Library(library.root).get_asset(first['asset_id'])
             self.assertEqual(len(reopened['items']), 3)
             self.assertEqual(source.read_bytes(), (library.root / reopened['stored_path']).read_bytes())
+            import gradio as gr
+            from ui.library_page import build_page
+            page = build_page(library, Encoder())
+            callbacks = page.objectlift_callbacks
+            selection = callbacks['select']([{'id': first['asset_id']}],
+                                            gr.SelectData(None, {'index': 0, 'value': None}))
+            self.assertEqual(len(selection[4]), 3)
+            selected_frame = callbacks['select'](selection[5],
+                                                 gr.SelectData(None, {'index': 2, 'value': None}))
+            self.assertIn('#t=10.08', selected_frame[2])
+            self.assertIn('10.08', selected_frame[0])
+            self.assertTrue(Path(selected_frame[6]).is_file())
 
     def test_decode_failure_does_not_register_asset(self):
         with tempfile.TemporaryDirectory() as directory:

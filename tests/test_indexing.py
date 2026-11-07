@@ -22,6 +22,29 @@ class Encoder:
 
 
 class IndexTests(unittest.TestCase):
+    def test_retry_only_selected_asset_and_skip_ready(self):
+        from unittest.mock import Mock
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            library = Library(root / 'data')
+            ids = []
+            for color in ['red', 'blue']:
+                path = root / f'{color}.png'
+                Image.new('RGB', (10, 10), color).save(path)
+                ids.append(library.import_image(path)['asset_id'])
+            encoder = Encoder()
+            encoder.image = Mock(return_value=[1, 0])
+            service = IndexService(library, encoder)
+            list(service.index_pending(asset_id=ids[0]))
+            self.assertEqual(library.get_asset(ids[1])['items'][0]['embedding_status'], 'pending')
+            list(service.index_pending(asset_id=ids[0]))
+            self.assertEqual(encoder.image.call_count, 1)
+            encoder.image.side_effect = ValueError('failure')
+            list(service.index_pending(asset_id=ids[1]))
+            encoder.image.side_effect = None
+            list(service.index_pending(asset_id=ids[1]))
+            self.assertEqual(library.get_asset(ids[1])['items'][0]['embedding_status'], 'ready')
+
     def test_query_cache_revision_and_busy(self):
         from unittest.mock import Mock
         with tempfile.TemporaryDirectory() as folder:
