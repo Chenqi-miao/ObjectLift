@@ -1,5 +1,7 @@
 """Serial indexing and compatible-vector retrieval; inference never holds a DB lock."""
 import threading
+from collections import OrderedDict
+from time import perf_counter
 from datetime import datetime, timezone
 
 import numpy as np
@@ -19,7 +21,19 @@ class IndexService:
     def __init__(self, library, encoder):
         self.library, self.encoder = library, encoder
         self.lock = threading.Lock()
+        self.query_cache = OrderedDict()
+        self.last_search_stats = {}
         library.recover_interrupted()
+
+    def warmup(self):
+        if not self.lock.acquire(blocking=False):
+            raise ValueError('索引或查询正在运行，请稍后重试。')
+        try:
+            started = perf_counter()
+            normalize(self.encoder.text('图片'))
+            return perf_counter() - started
+        finally:
+            self.lock.release()
 
     def index_pending(self):
         if not self.lock.acquire(blocking=False):
@@ -50,23 +64,42 @@ class IndexService:
             self.lock.release()
 
     def search(self, query, limit=10, media_type=None):
+        started = perf_counter()
         if not query.strip():
             return []
-        with self.lock:
+        if not self.lock.acquire(blocking=False):
+            raise ValueError('索引或查询正在运行，请稍后重试。')
+        try:
             with self.library.connection() as db:
                 rows = db.execute("SELECT v.*, a.original_name, a.media_type FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE embedding_status='ready' AND embedding_model=? AND embedding_revision=? AND (? IS NULL OR a.media_type=?)", (self.encoder.model_id, self.encoder.revision, media_type, media_type)).fetchall()
             if not rows:
+                self.last_search_stats = {'total_seconds': perf_counter() - started, 'cache_hit': False}
                 return []
-            query_vector = normalize(self.encoder.text(query.strip()))
+            loaded = perf_counter()
+            key = (self.encoder.model_id, self.encoder.revision, query.strip())
+            cached = key in self.query_cache
+            if cached:
+                query_vector = self.query_cache.pop(key)
+            else:
+                query_vector = normalize(self.encoder.text(query.strip()))
+            self.query_cache[key] = query_vector
+            if len(self.query_cache) > 64:
+                self.query_cache.popitem(last=False)
+            encoded = perf_counter()
             hits = []
+            vectors = []
             for row in rows:
                 if row['embedding_dim'] != len(query_vector):
                     continue
                 vector = normalize(np.frombuffer(row['embedding'], dtype='<f4'))
                 hit = {key: row[key] for key in ('asset_id', 'preview_path', 'original_name', 'caption', 'timestamp_ms', 'media_type')}
                 hit['visual_item_id'] = row['id']
-                hit['similarity'] = float(vector @ query_vector)
                 hits.append(hit)
+                vectors.append(vector)
+            if vectors:
+                scores = np.stack(vectors) @ query_vector
+                for hit, score in zip(hits, scores):
+                    hit['similarity'] = float(score)
             selected = []
             for hit in sorted(hits, key=lambda hit: hit['similarity'], reverse=True):
                 if hit['timestamp_ms'] is not None and any(
@@ -74,4 +107,13 @@ class IndexService:
                     abs(other['timestamp_ms'] - hit['timestamp_ms']) < 10000 for other in selected):
                     continue
                 selected.append(hit)
+            self.last_search_stats = {
+                'total_seconds': perf_counter() - started,
+                'read_seconds': loaded - started,
+                'encode_seconds': encoded - loaded,
+                'rank_seconds': perf_counter() - encoded,
+                'cache_hit': cached,
+            }
             return selected[:limit]
+        finally:
+            self.lock.release()

@@ -1,4 +1,6 @@
 import tempfile
+import json
+from types import SimpleNamespace
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -7,6 +9,7 @@ from PIL import Image
 
 from services.library import Library
 from services.indexing import IndexService
+from services.video import extract_video
 
 
 class Encoder:
@@ -23,6 +26,24 @@ class Encoder:
 
 
 class VideoTests(unittest.TestCase):
+    def test_duration_boundary_and_frame_limit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / 'frames'
+            def runner(tool, arguments):
+                if tool == 'ffprobe':
+                    return SimpleNamespace(stdout=json.dumps({
+                        'streams': [{'codec_type': 'video', 'codec_name': 'h264', 'width': 32, 'height': 24}],
+                        'format': {'format_name': 'mov,mp4', 'duration': duration}}))
+                self.assertEqual(arguments[arguments.index('-frames:v') + 1], '49')
+                (output / 'frame-001.png').touch()
+                return SimpleNamespace(stderr='pts_time:0')
+            with patch('services.video.run', side_effect=runner):
+                duration = 240
+                self.assertEqual(extract_video('sample.mp4', output)[2], 240000)
+                duration = 240.001
+                with self.assertRaisesRegex(ValueError, '240'):
+                    extract_video('sample.mp4', output)
+
     def test_import_index_merge_and_persistence(self):
         def extract(source, output):
             output.mkdir()

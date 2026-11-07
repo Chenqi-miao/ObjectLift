@@ -131,3 +131,9 @@
 FFmpeg 可放置 tools/ffmpeg/<发行目录>/bin，或使用 PATH / OBJECTLIFT_FFMPEG 和 OBJECTLIFT_FFPROBE。抽帧规则依据 https://www.ffmpeg.org/ffmpeg-filters.html 的 select 与 showinfo。
 
 真实 FFmpeg 验证通过：scripts/smoke_video.py 生成 12 秒 H.264，成功入库、哈希去重并产出 0 / 5000 / 10000ms 三帧。FFmpeg 已下载至项目 tools 目录并自动发现。浏览器播放定位、真实模型视频检索质量与 Docker 构建尚未验收。
+
+视频时长上限调整为 240 秒（4 分钟），抽帧安全上限同步由 37 调整为 49；文件大小上限仍为 300MB。
+
+## 搜索等待优化（2026-11-07）
+增加最多 64 条查询向量缓存（模型与 revision 隔离），过滤条件和 Top-K 变更可复用编码；向量内积改为矩阵计算。索引繁忙时搜索立即提示，增加预热搜索按钮和服务端耗时展示。
+真实本地素材库实测：冷启动查询 62.063s（编码含加载 62.058s），后续新查询 0.086s，重复查询 0.003s。这是单次诊断而非 P95，也不含浏览器渲染；首次模型加载成本尚未消除。报告 data/search-benchmark.json，复测脚本 scripts/benchmark_search.py。20 项回归通过。

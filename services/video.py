@@ -6,6 +6,8 @@ import re
 import subprocess
 from pathlib import Path
 
+MAX_DURATION_SECONDS = 240
+SAMPLE_INTERVAL_SECONDS = 5
 
 def run(tool, arguments):
     bundled = sorted((Path(__file__).resolve().parents[1] / 'tools' / 'ffmpeg').glob(f'*/bin/{tool}.exe'))
@@ -33,16 +35,16 @@ def extract_video(source, output):
         raise ValueError('文件不是 MP4 容器。')
     stream = streams[0]
     duration = float(info['format'].get('duration', 0))
-    if not math.isfinite(duration) or not 0 < duration <= 180:
-        raise ValueError('视频时长必须在 0 到 180 秒之间。')
+    if not math.isfinite(duration) or not 0 < duration <= MAX_DURATION_SECONDS:
+        raise ValueError(f'视频时长必须在 0 到 {MAX_DURATION_SECONDS} 秒之间。')
     width, height = int(stream['width']), int(stream['height'])
     if not 0 < width * height <= 40_000_000:
         raise ValueError('视频画面尺寸过大或无效。')
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     result = run('ffmpeg', ['-nostdin', '-hide_banner', '-i', source, '-map', '0:v:0',
-        '-vf', "select='isnan(prev_selected_t)+gte(t-prev_selected_t,5)',scale=512:512:force_original_aspect_ratio=decrease,showinfo",
-        '-fps_mode', 'vfr', '-frames:v', '37', '-an', output / 'frame-%03d.png'])
+        '-vf', f"select='isnan(prev_selected_t)+gte(t-prev_selected_t,{SAMPLE_INTERVAL_SECONDS})',scale=512:512:force_original_aspect_ratio=decrease,showinfo",
+        '-fps_mode', 'vfr', '-frames:v', str(MAX_DURATION_SECONDS // SAMPLE_INTERVAL_SECONDS + 1), '-an', output / 'frame-%03d.png'])
     times = [round(float(t) * 1000) for t in re.findall(r'\bpts_time:([\d.eE+\-]+)', result.stderr)]
     frames = sorted(output.glob('frame-*.png'))
     if not frames or len(frames) != len(times) or any(t < 0 for t in times):

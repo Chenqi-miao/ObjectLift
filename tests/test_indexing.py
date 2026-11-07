@@ -22,6 +22,31 @@ class Encoder:
 
 
 class IndexTests(unittest.TestCase):
+    def test_query_cache_revision_and_busy(self):
+        from unittest.mock import Mock
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'image.png'
+            Image.new('RGB', (10, 10)).save(path)
+            library = Library(Path(folder) / 'data')
+            library.import_image(path)
+            encoder = Encoder()
+            encoder.text = Mock(return_value=[1, 0])
+            service = IndexService(library, encoder)
+            self.assertGreaterEqual(service.warmup(), 0)
+            encoder.text.reset_mock()
+            list(service.index_pending())
+            first = service.search('图片')
+            self.assertEqual(service.search(' 图片 ', limit=1), first)
+            self.assertEqual(encoder.text.call_count, 1)
+            self.assertTrue(service.last_search_stats['cache_hit'])
+            encoder.revision = 'changed'
+            list(service.index_pending())
+            service.search('图片')
+            self.assertEqual(encoder.text.call_count, 2)
+            with service.lock:
+                with self.assertRaisesRegex(ValueError, '正在运行'):
+                    service.search('图片')
+
     def test_retry_persistence_and_revision_isolation(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / 'image.png'
