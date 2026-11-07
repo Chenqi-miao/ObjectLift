@@ -13,6 +13,36 @@ CSS = """
 
 
 def build_workbench(library, indexer, callbacks, tag_names):
+    def refresh_trash():
+        rows = library.list_trash()
+        return gr.update(choices=[(f"{r['original_name']} · {r['id'][:8]}", r['id']) for r in rows], value=None), [[r['original_name'], r['media_type'], r['deleted_at']] for r in rows]
+
+    def remove_selected(asset_id):
+        if not asset_id:
+            return ['请先选择素材。', *[gr.skip() for _ in range(8)]]
+        if not indexer.lock.acquire(blocking=False):
+            return ['模型任务正在运行，请完成后再删除。', *[gr.skip() for _ in range(8)]]
+        try:
+            library.trash_asset(asset_id)
+            return ['已移入回收站，可在回收站恢复。', '', None, '', None, [], [], None, '']
+        except ValueError as exc:
+            return [str(exc), *[gr.skip() for _ in range(8)]]
+        finally:
+            indexer.lock.release()
+
+    def restore_selected(asset_id):
+        if not asset_id:
+            return '请先选择要恢复的素材。'
+        if not indexer.lock.acquire(blocking=False):
+            return '模型任务正在运行，请完成后再恢复。'
+        try:
+            library.restore_asset(asset_id)
+            return '素材已恢复，原有描述、标签和索引保留。'
+        except ValueError as exc:
+            return str(exc)
+        finally:
+            indexer.lock.release()
+
     def browse(query='', media_type='全部', tag='全部', keyword='', limit=20):
         if query.strip():
             gallery, scores, message, refs = callbacks['search'](query, limit, media_type, tag)
@@ -101,6 +131,7 @@ def build_workbench(library, indexer, callbacks, tag_names):
                         with gr.Accordion('更多操作与文件信息', open=False):
                             describe = gr.Button('生成 / 重新生成描述与标签')
                             retry = gr.Button('重试此素材索引')
+                            remove = gr.Button('删除素材（移入回收站）')
                             detail = gr.Textbox(label='文件信息', interactive=False, lines=8)
                 task = gr.Textbox(label='处理状态', value='暂无运行中的任务', interactive=False)
             with gr.Tab('诊断与批量处理'):
@@ -115,11 +146,22 @@ def build_workbench(library, indexer, callbacks, tag_names):
                 batch = gr.Button('补齐全库未生成 / 失败图片标签')
                 gr.Markdown('处理全库，不受检查范围限制；已完成项跳过。每张需要加载模型并推理，可能耗时较长。')
                 batch_status = gr.Textbox(label='批量任务进度',interactive=False)
+            with gr.Tab('回收站'):
+                gr.Markdown('### 回收站\n这里的素材不会出现在素材库、标签检查和搜索结果中。原文件及处理结果仍保留，可以恢复；此操作不会释放磁盘空间。')
+                trash_choice = gr.Dropdown(choices=[], label='选择要恢复的素材')
+                trash_rows = gr.Dataframe(headers=['文件名', '类型', '移除时间（UTC）'], interactive=False)
+                trash_refresh = gr.Button('刷新回收站')
+                restore = gr.Button('恢复选中素材', variant='primary')
+                trash_status = gr.Textbox(label='回收站状态', interactive=False)
 
         inputs = [query,kind,tag,keyword,limit]
         outputs = [gallery,refs,summary]
         diagnostic_outputs = [diagnostic_summary,counts,details,diagnostic_gallery,diagnostic_refs]
         selection = [detail,download,player,selected,frames,frame_refs,preview,description]
+        remove.click(remove_selected,selected,[task,*selection],queue=False).then(browse,inputs,outputs).then(callbacks['inspect_tags'],category,diagnostic_outputs).then(refresh_trash,outputs=[trash_choice,trash_rows])
+        restore.click(restore_selected,trash_choice,trash_status,queue=False).then(refresh_trash,outputs=[trash_choice,trash_rows]).then(browse,inputs,outputs).then(callbacks['inspect_tags'],category,diagnostic_outputs)
+        trash_refresh.click(refresh_trash,outputs=[trash_choice,trash_rows])
+        page.load(refresh_trash,outputs=[trash_choice,trash_rows])
         for event in (search.click,query.submit,kind.change,tag.change,keyword.submit,limit.release,refresh.click):
             event(browse,inputs,outputs)
         clear.click(lambda: '', outputs=query).then(browse,inputs,outputs)
@@ -133,5 +175,5 @@ def build_workbench(library, indexer, callbacks, tag_names):
         diagnostic_refresh.click(callbacks['inspect_tags'],category,diagnostic_outputs)
         page.load(browse,inputs,outputs)
         page.load(callbacks['inspect_tags'],category,diagnostic_outputs)
-    page.objectlift_callbacks = {**callbacks, 'browse': browse}
+    page.objectlift_callbacks = {**callbacks, 'browse': browse, 'remove_selected':remove_selected, 'restore_selected':restore_selected}
     return page

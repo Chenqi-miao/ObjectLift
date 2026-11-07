@@ -55,6 +55,9 @@ class Library:
                     caption TEXT, model TEXT, revision TEXT, timestamps TEXT, error TEXT,
                     updated_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS asset_trash (
+                    asset_id TEXT PRIMARY KEY REFERENCES assets(id), deleted_at TEXT NOT NULL
+                );
                 PRAGMA user_version=1;
             ''')
             db.execute("INSERT OR IGNORE INTO tags (visual_item_id,name,source) SELECT v.id,'未分类','auto' FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE a.media_type='image' AND v.caption_status='ready' AND NOT EXISTS (SELECT 1 FROM tags t WHERE t.visual_item_id=v.id)")
@@ -73,20 +76,20 @@ class Library:
     def list_assets(self, media_type=None, keyword='', status=None):
         with self.connection() as db:
             return [dict(row) for row in db.execute(
-                'SELECT * FROM assets WHERE (? IS NULL OR media_type=?) '
+                'SELECT * FROM assets WHERE id NOT IN (SELECT asset_id FROM asset_trash) AND (? IS NULL OR media_type=?) '
                 "AND (?='' OR instr(lower(original_name), lower(?))>0) "
                 'AND (? IS NULL OR status=?) ORDER BY created_at DESC, id',
                 (media_type, media_type, keyword.strip(), keyword.strip(), status, status))]
 
     def statistics(self):
         with self.connection() as db:
-            counts = dict(db.execute('SELECT status, count(*) FROM assets GROUP BY status'))
-            searchable = db.execute("SELECT count(DISTINCT asset_id) FROM visual_items WHERE embedding_status='ready'").fetchone()[0]
+            counts = dict(db.execute('SELECT status, count(*) FROM assets WHERE id NOT IN (SELECT asset_id FROM asset_trash) GROUP BY status'))
+            searchable = db.execute("SELECT count(DISTINCT asset_id) FROM visual_items WHERE embedding_status='ready' AND asset_id NOT IN (SELECT asset_id FROM asset_trash)").fetchone()[0]
         return {'total': sum(counts.values()), 'searchable': searchable, **counts}
 
     def image_diagnostics(self):
         with self.connection() as db:
-            rows = [dict(r) for r in db.execute("SELECT a.id, a.original_name, v.id AS visual_item_id, v.preview_path, v.caption, v.caption_status, v.embedding_status, v.embedding_model, v.embedding_revision, v.error_message FROM assets a JOIN visual_items v ON a.id=v.asset_id WHERE a.media_type='image' ORDER BY a.created_at DESC, a.id")]
+            rows = [dict(r) for r in db.execute("SELECT a.id, a.original_name, v.id AS visual_item_id, v.preview_path, v.caption, v.caption_status, v.embedding_status, v.embedding_model, v.embedding_revision, v.error_message FROM assets a JOIN visual_items v ON a.id=v.asset_id WHERE a.media_type='image' AND a.id NOT IN (SELECT asset_id FROM asset_trash) ORDER BY a.created_at DESC, a.id")]
             tags = {}
             for row in db.execute('SELECT visual_item_id,name FROM tags ORDER BY name'):
                 tags.setdefault(row[0], []).append(row[1])
@@ -96,6 +99,8 @@ class Library:
 
     def get_asset(self, asset_id):
         with self.connection() as db:
+            if db.execute('SELECT 1 FROM asset_trash WHERE asset_id=?', (asset_id,)).fetchone():
+                raise ValueError('素材已移入回收站，请先恢复。')
             row = db.execute('SELECT * FROM assets WHERE id=?', (asset_id,)).fetchone()
             if row is None:
                 raise KeyError(asset_id)
@@ -113,11 +118,30 @@ class Library:
         results = []
         for path in paths:
             try:
-                results.append(self.import_video(path) if Path(path).suffix.lower() == '.mp4' else self.import_image(path))
+                result = self.import_video(path) if Path(path).suffix.lower() == '.mp4' else self.import_image(path)
+                if result['status'] == 'duplicate' and any(a['id'] == result['asset_id'] for a in self.list_trash()):
+                    result['status'] = 'in_trash'
+                    result['error'] = '相同素材在回收站中，请先恢复。'
+                results.append(result)
             except (OSError, ValueError) as exc:
                 results.append({'filename': Path(path).name, 'status': 'failed',
                                 'error': str(exc)})
         return results
+
+    def trash_asset(self, asset_id):
+        with self.connection() as db:
+            if not db.execute('SELECT 1 FROM assets WHERE id=?', (asset_id,)).fetchone():
+                raise ValueError('素材不存在。')
+            db.execute('INSERT OR IGNORE INTO asset_trash VALUES (?,?)', (asset_id, datetime.now(timezone.utc).isoformat()))
+
+    def restore_asset(self, asset_id):
+        with self.connection() as db:
+            if not db.execute('DELETE FROM asset_trash WHERE asset_id=?', (asset_id,)).rowcount:
+                raise ValueError('素材不在回收站中，请刷新列表。')
+
+    def list_trash(self):
+        with self.connection() as db:
+            return [dict(r) for r in db.execute('SELECT a.*, t.deleted_at FROM assets a JOIN asset_trash t ON t.asset_id=a.id ORDER BY t.deleted_at DESC')]
 
     def import_video(self, path):
         source = Path(path)

@@ -40,7 +40,7 @@ class IndexService:
             raise ValueError('索引或查询正在运行，请稍后重试。')
         try:
             with self.library.connection() as db:
-                rows = db.execute("SELECT v.*, a.stored_path FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE (embedding_status != 'ready' OR embedding_model IS NULL OR embedding_model != ? OR embedding_revision IS NULL OR embedding_revision != ?) AND (? IS NULL OR a.id=?)", (self.encoder.model_id, self.encoder.revision, asset_id, asset_id)).fetchall()
+                rows = db.execute("SELECT v.*, a.stored_path FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE a.id NOT IN (SELECT asset_id FROM asset_trash) AND (embedding_status != 'ready' OR embedding_model IS NULL OR embedding_model != ? OR embedding_revision IS NULL OR embedding_revision != ?) AND (? IS NULL OR a.id=?)", (self.encoder.model_id, self.encoder.revision, asset_id, asset_id)).fetchall()
             yield f'准备索引 {len(rows)} 个画面'
             for number, row in enumerate(rows, 1):
                 with self.library.connection() as db:
@@ -71,7 +71,7 @@ class IndexService:
             raise ValueError('索引或查询正在运行，请稍后重试。')
         try:
             with self.library.connection() as db:
-                rows = db.execute("SELECT v.*, a.original_name, a.media_type FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE embedding_status='ready' AND embedding_model=? AND embedding_revision=? AND (? IS NULL OR a.media_type=?)", (self.encoder.model_id, self.encoder.revision, media_type, media_type)).fetchall()
+                rows = db.execute("SELECT v.*, a.original_name, a.media_type FROM visual_items v JOIN assets a ON a.id=v.asset_id WHERE a.id NOT IN (SELECT asset_id FROM asset_trash) AND embedding_status='ready' AND embedding_model=? AND embedding_revision=? AND (? IS NULL OR a.media_type=?)", (self.encoder.model_id, self.encoder.revision, media_type, media_type)).fetchall()
             if tag:
                 with self.library.connection() as db:
                     eligible = {r[0] for r in db.execute('SELECT visual_item_id FROM tags WHERE name=?', (tag,))}
