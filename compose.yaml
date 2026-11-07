@@ -5,5 +5,7 @@ services:
       - "127.0.0.1:7860:7860"
     volumes:
       - ./jobs:/app/jobs
+      - ./data:/app/data
+      - ./models:/app/models
     environment:
       GRADIO_ANALYTICS_ENABLED: "False"

@@ -6,6 +6,9 @@ __pycache__/
 vendor/
 jobs/
 models/
+data/
 *.pt
 .pytest_cache/
 .uv-cache/
+
+/tools/
