@@ -1,5 +1,6 @@
 """V2 library browser; model-dependent features stay visibly pending."""
 import os
+from queue import Queue, Empty
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from time import perf_counter
 from urllib.parse import quote
@@ -55,18 +56,35 @@ def build_page(library=None, encoder=None):
     def complete_tags(category):
         pending = [r for r in library.image_diagnostics() if r['caption_status'] in ('pending', 'failed')]
         yield f'准备补齐全库 {len(pending)} 张图片；逐张处理，已完成项跳过。', *inspect_tags(category)
-        failures = 0
-        for number, row in enumerate(pending, 1):
-            yield f"正在加载标签：第 {number}/{len(pending)} 张 · {row['original_name']}（此前完成 {number-1} 张）", *inspect_tags(category)
+        yield '正在加载标签：本批次复用模型，逐张保存结果。', *inspect_tags(category)
+        events = Queue()
+        def produce():
             try:
-                for done, update in generation_updates(row['id']):
-                    yield f"第 {number}/{len(pending)} 张 · {row['original_name']} · {update}", *inspect_tags(category)
-                message = '完成'
-            except Exception as exc:
-                failures += 1
-                message = str(exc)
-            yield f"{number}/{len(pending)} · {row['original_name']} · {message}", *inspect_tags(category)
-        yield f'本轮处理结束：成功 {len(pending)-failures}，失败 {failures}。', *inspect_tags(category)
+                for result in captions.describe_many([r['id'] for r in pending]):
+                    events.put(result)
+            finally:
+                events.put(None)
+        failures = completed = 0
+        started = perf_counter()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(produce)
+            while True:
+                try:
+                    result = events.get(timeout=1)
+                except Empty:
+                    yield f'正在处理 {completed}/{len(pending)} 张 · 已用时 {perf_counter()-started:.0f} 秒', *inspect_tags(category)
+                    continue
+                if result is None:
+                    try:
+                        future.result()
+                    except Exception as exc:
+                        yield f'批量处理未完成：{exc}', *inspect_tags(category)
+                        return
+                    break
+                completed += 1
+                failures += int('error' in result)
+                yield f"{completed}/{len(pending)} · {result.get('error', '完成')}", *inspect_tags(category)
+        yield f'本轮处理结束：成功 {completed-failures}，失败 {failures} · {perf_counter()-started:.1f} 秒。', *inspect_tags(category)
 
     def describe_video(selected):
         if not selected:

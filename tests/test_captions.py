@@ -77,3 +77,34 @@ class CaptionTests(unittest.TestCase):
             service.save(asset_id, 'processing')
             library.recover_interrupted()
             self.assertEqual(library.get_asset(asset_id)['description']['status'], 'failed')
+
+
+class BatchCaptionTests(unittest.TestCase):
+    def test_batch_isolates_failure_and_releases_lock(self):
+        with tempfile.TemporaryDirectory() as directory:
+            library = Library(Path(directory) / 'data')
+            indexer = SimpleNamespace(lock=threading.Lock(), encoder=SimpleNamespace(unload=Mock()))
+            service = CaptionService(library, indexer)
+            def generate(asset_id):
+                self.assertTrue(indexer.lock.locked())
+                if asset_id == 'bad':
+                    raise ValueError('broken image')
+                return 'caption'
+            with patch('services.captions.CaptionService.describe', side_effect=generate):
+                results = list(service.describe_many(['one', 'bad', 'three']))
+            self.assertEqual([r['id'] for r in results], ['one', 'bad', 'three'])
+            self.assertEqual(results[1]['error'], 'broken image')
+            self.assertEqual(results[2]['output'], 'caption')
+            indexer.encoder.unload.assert_called_once()
+            self.assertFalse(indexer.lock.locked())
+
+    def test_batch_close_releases_lock_and_busy_batch_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            service = CaptionService(Library(Path(directory) / 'data'), SimpleNamespace(lock=threading.Lock(), encoder=None))
+            with patch('services.captions.CaptionService.describe', return_value='ok'):
+                batch = service.describe_many(['a', 'b'])
+                next(batch)
+                with self.assertRaises(ValueError):
+                    list(service.describe_many(['c']))
+                batch.close()
+            self.assertFalse(service.indexer.lock.locked())

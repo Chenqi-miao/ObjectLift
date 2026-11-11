@@ -114,9 +114,10 @@ def build_workbench(library, indexer, callbacks, tag_names):
                             limit = gr.Slider(1,50,value=20,step=1,label='最多返回')
                             gr.Markdown('首次搜索需要加载模型；可提前预热。搜索按相似程度排序，不代表准确率。')
                             warmup = gr.Button('预热搜索')
-                        with gr.Accordion('处理任务', open=False):
+                        with gr.Accordion('处理任务', open=True):
                             index = gr.Button('建立索引 / 重试失败项')
-                            gr.Markdown('标签批量补齐位于诊断页。')
+                            batch_main = gr.Button('补齐图片描述与标签')
+                            gr.Markdown('先建立索引即可搜索；描述与标签可稍后补齐。以上操作处理全库待处理项，不受筛选影响。')
                     with gr.Column(scale=4, min_width=360):
                         summary = gr.Textbox(label='当前视图', interactive=False, lines=2)
                         gallery = gr.Gallery(label='素材', columns=3, height=600, type='filepath', elem_id='asset-grid', allow_preview=False)
@@ -144,7 +145,7 @@ def build_workbench(library, indexer, callbacks, tag_names):
                 diagnostic_gallery = gr.Gallery(label='检查素材（选中后到素材工作台查看详情）',columns=5,type='filepath',allow_preview=False)
                 diagnostic_refs = gr.State([])
                 batch = gr.Button('补齐全库未生成 / 失败图片标签')
-                gr.Markdown('处理全库，不受检查范围限制；已完成项跳过。每张需要加载模型并推理，可能耗时较长。')
+                gr.Markdown('处理全库，不受检查范围限制；已完成项跳过。本批次只加载一次模型，逐张保存结果，结束后释放显存。')
                 batch_status = gr.Textbox(label='批量任务进度',interactive=False)
             with gr.Tab('回收站'):
                 gr.Markdown('### 回收站\n这里的素材不会出现在素材库、标签检查和搜索结果中。原文件及处理结果仍保留，可以恢复；此操作不会释放磁盘空间。')
@@ -169,7 +170,7 @@ def build_workbench(library, indexer, callbacks, tag_names):
         gallery.select(callbacks['select'],refs,selection)
         frames.select(callbacks['select'],frame_refs,selection)
         diagnostic_gallery.select(callbacks['select'],diagnostic_refs,selection)
-        for button, fn, ins, outs in [(describe,callbacks['describe_video'],selected,description),(index,index_all,None,task),(retry,retry_one,selected,task),(warmup,callbacks['warmup'],None,task),(batch,callbacks['complete_tags'],category,[batch_status,*diagnostic_outputs])]:
+        for button, fn, ins, outs in [(describe,callbacks['describe_video'],selected,description),(index,index_all,None,task),(retry,retry_one,selected,task),(warmup,callbacks['warmup'],None,task),(batch,callbacks['complete_tags'],category,[batch_status,*diagnostic_outputs]),(batch_main,callbacks['complete_tags'],category,[task,*diagnostic_outputs])]:
             button.click(lambda: gr.update(interactive=False),outputs=button,queue=False).then(fn,ins,outs,concurrency_id='model-task',concurrency_limit=1).then(lambda: gr.update(interactive=True),outputs=button).then(browse,inputs,outputs).then(callbacks['inspect_tags'],category,diagnostic_outputs)
         category.change(callbacks['inspect_tags'],category,diagnostic_outputs)
         diagnostic_refresh.click(callbacks['inspect_tags'],category,diagnostic_outputs)

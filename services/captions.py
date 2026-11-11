@@ -3,6 +3,9 @@ import json
 import os
 import subprocess
 import sys
+import threading
+from types import SimpleNamespace
+from services.caption_session import CaptionSession
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from datetime import datetime, timezone
@@ -50,12 +53,14 @@ class CaptionService:
                     frames = [{'path': str(self.library.root / item['preview_path']), 'timestamp_ms': item['timestamp_ms']} for item in sampled]
                     request.write_text(json.dumps({'model_path': str(self.model_path), 'media_type': asset['media_type'], 'duration_ms': asset['duration_ms'], 'frames': frames}), encoding='utf-8')
                     env = {**os.environ, 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'}
-                    result = subprocess.run([sys.executable, str(Path(__file__).with_name('caption_worker.py')), str(request), str(output)],
+                    result = getattr(self, '_run', subprocess.run)([sys.executable, str(Path(__file__).with_name('caption_worker.py')), str(request), str(output)],
                         capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=600, env=env,
                         creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
                     if result.returncode:
                         raise ValueError('描述生成失败：' + result.stderr[-1500:])
                     generated = json.loads(output.read_text(encoding='utf-8'))
+                    if 'error' in generated:
+                        raise ValueError(generated['error'])
                     caption = generated['caption']
                     if not isinstance(caption, str) or not caption.strip():
                         raise ValueError('描述结果无效。')
@@ -67,6 +72,26 @@ class CaptionService:
             except Exception as exc:
                 self.save(asset_id, 'failed', revision=revision, error=str(exc))
                 raise
+        finally:
+            self.indexer.lock.release()
+
+    def describe_many(self, asset_ids):
+        if not asset_ids:
+            return
+        if not self.indexer.lock.acquire(blocking=False):
+            raise ValueError('模型正在处理其他任务，请稍后重试。')
+        try:
+            if hasattr(self.indexer.encoder, 'unload'):
+                self.indexer.encoder.unload()
+            with CaptionSession(self.library.root) as session:
+                isolated = CaptionService(self.library, SimpleNamespace(lock=threading.Lock(), encoder=None))
+                isolated.model_path = self.model_path
+                isolated._run = session.run
+                for asset_id in asset_ids:
+                    try:
+                        yield {'id': asset_id, 'output': isolated.describe(asset_id)}
+                    except Exception as exc:
+                        yield {'id': asset_id, 'error': str(exc)}
         finally:
             self.indexer.lock.release()
 

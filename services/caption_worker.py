@@ -9,15 +9,17 @@ from PIL import Image, ImageOps
 from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
 
 
-def main():
-    request = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
-    path = request['model_path']
+def load_model(path):
     processor = AutoProcessor.from_pretrained(path, local_files_only=True,
                                              min_pixels=56*56, max_pixels=224*224)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = Qwen2VLForConditionalGeneration.from_pretrained(
         path, local_files_only=True, torch_dtype=torch.float16 if device == 'cuda' else torch.float32,
         attn_implementation='sdpa').to(device).eval()
+    return processor, model, device
+
+
+def generate(request, processor, model, device):
     frames = []
     for frame in request['frames']:
         with Image.open(frame['path']) as image:
@@ -52,7 +54,29 @@ def main():
     if is_image:
         start, end = caption.find('{'), caption.rfind('}')
         result = json.loads(caption[start:end+1])
-    Path(sys.argv[2]).write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
+    return result
+
+
+def main():
+    if sys.argv[1] == '--session':
+        loaded = None
+        for line in sys.stdin:
+            request_path, output_path = json.loads(line)
+            try:
+                request = json.loads(Path(request_path).read_text(encoding='utf-8'))
+                if loaded is None:
+                    loaded = load_model(request['model_path'])
+                result = generate(request, *loaded)
+            except Exception as exc:
+                result = {'error': str(exc)}
+            output = Path(output_path)
+            temporary = output.with_suffix('.tmp')
+            temporary.write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
+            temporary.replace(output)
+    else:
+        request = json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
+        result = generate(request, *load_model(request['model_path']))
+        Path(sys.argv[2]).write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
 
 
 if __name__ == '__main__':
