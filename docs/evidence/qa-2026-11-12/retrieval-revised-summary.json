@@ -1,0 +1,310 @@
+{
+  "source": "retrieval-results.json",
+  "change": "Reporting metric revised after evaluation at user request; no inference rerun; not model improvement",
+  "hit_queries": 16,
+  "positive_queries": 18,
+  "mean_available_top5_fraction": 0.7148148148148148,
+  "deprecated_metric": "Precision@5 is retained only in historical raw results, excluded from acceptance",
+  "results": [
+    {
+      "query": "有人的图片",
+      "available_relevant": 61,
+      "correct_in_top5": 4,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 0.8,
+      "top5": [
+        "000000000241.jpg",
+        "000000000569.jpg",
+        "000000000572.jpg",
+        "000000000415.jpg",
+        "000000000643.jpg"
+      ]
+    },
+    {
+      "query": "有自行车的图片",
+      "available_relevant": 3,
+      "correct_in_top5": 0,
+      "maximum_possible_correct_in_top5": 3,
+      "found_any": false,
+      "available_top5_fraction": 0.0,
+      "top5": [
+        "000000000073.jpg",
+        "000000000086.jpg",
+        "000000000629.jpg",
+        "000000000529.jpg",
+        "000000000154.jpg"
+      ]
+    },
+    {
+      "query": "有汽车的图片",
+      "available_relevant": 12,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 0.4,
+      "top5": [
+        "000000000643.jpg",
+        "000000000650.jpg",
+        "000000000471.jpg",
+        "000000000071.jpg",
+        "000000000241.jpg"
+      ]
+    },
+    {
+      "query": "有摩托车的图片",
+      "available_relevant": 4,
+      "correct_in_top5": 4,
+      "maximum_possible_correct_in_top5": 4,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000529.jpg",
+        "000000000073.jpg",
+        "000000000086.jpg",
+        "000000000629.jpg",
+        "000000000349.jpg"
+      ]
+    },
+    {
+      "query": "有飞机的图片",
+      "available_relevant": 5,
+      "correct_in_top5": 5,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000081.jpg",
+        "000000000247.jpg",
+        "000000000540.jpg",
+        "000000000542.jpg",
+        "000000000472.jpg"
+      ]
+    },
+    {
+      "query": "有公交车的图片",
+      "available_relevant": 5,
+      "correct_in_top5": 3,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 0.6,
+      "top5": [
+        "000000000641.jpg",
+        "000000000532.jpg",
+        "000000000471.jpg",
+        "000000000257.jpg",
+        "000000000349.jpg"
+      ]
+    },
+    {
+      "query": "有火车的图片",
+      "available_relevant": 3,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 3,
+      "found_any": true,
+      "available_top5_fraction": 0.6666666666666666,
+      "top5": [
+        "000000000349.jpg",
+        "000000000071.jpg",
+        "000000000540.jpg",
+        "000000000643.jpg",
+        "000000000081.jpg"
+      ]
+    },
+    {
+      "query": "有卡车的图片",
+      "available_relevant": 5,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 0.4,
+      "top5": [
+        "000000000471.jpg",
+        "000000000071.jpg",
+        "000000000643.jpg",
+        "000000000349.jpg",
+        "000000000257.jpg"
+      ]
+    },
+    {
+      "query": "有船的图片",
+      "available_relevant": 2,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 2,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000404.jpg",
+        "000000000400.jpg",
+        "000000000520.jpg",
+        "000000000643.jpg",
+        "000000000241.jpg"
+      ]
+    },
+    {
+      "query": "有鸟的图片",
+      "available_relevant": 2,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 2,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000143.jpg",
+        "000000000520.jpg",
+        "000000000569.jpg",
+        "000000000025.jpg",
+        "000000000502.jpg"
+      ]
+    },
+    {
+      "query": "有猫的图片",
+      "available_relevant": 4,
+      "correct_in_top5": 3,
+      "maximum_possible_correct_in_top5": 4,
+      "found_any": true,
+      "available_top5_fraction": 0.75,
+      "top5": [
+        "000000000650.jpg",
+        "000000000443.jpg",
+        "000000000599.jpg",
+        "000000000241.jpg",
+        "000000000491.jpg"
+      ]
+    },
+    {
+      "query": "有狗的图片",
+      "available_relevant": 9,
+      "correct_in_top5": 5,
+      "maximum_possible_correct_in_top5": 5,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000074.jpg",
+        "000000000581.jpg",
+        "000000000307.jpg",
+        "000000000490.jpg",
+        "000000000309.jpg"
+      ]
+    },
+    {
+      "query": "有马的图片",
+      "available_relevant": 1,
+      "correct_in_top5": 1,
+      "maximum_possible_correct_in_top5": 1,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000154.jpg",
+        "000000000049.jpg",
+        "000000000034.jpg",
+        "000000000307.jpg",
+        "000000000581.jpg"
+      ]
+    },
+    {
+      "query": "有羊的图片",
+      "available_relevant": 0,
+      "correct_in_top5": 0,
+      "maximum_possible_correct_in_top5": 0,
+      "found_any": null,
+      "available_top5_fraction": null,
+      "top5": [
+        "000000000154.jpg",
+        "000000000143.jpg",
+        "000000000491.jpg",
+        "000000000581.jpg",
+        "000000000643.jpg"
+      ]
+    },
+    {
+      "query": "有牛的图片",
+      "available_relevant": 0,
+      "correct_in_top5": 0,
+      "maximum_possible_correct_in_top5": 0,
+      "found_any": null,
+      "available_top5_fraction": null,
+      "top5": [
+        "000000000154.jpg",
+        "000000000643.jpg",
+        "000000000034.jpg",
+        "000000000307.jpg",
+        "000000000241.jpg"
+      ]
+    },
+    {
+      "query": "有大象的图片",
+      "available_relevant": 4,
+      "correct_in_top5": 3,
+      "maximum_possible_correct_in_top5": 4,
+      "found_any": true,
+      "available_top5_fraction": 0.75,
+      "top5": [
+        "000000000154.jpg",
+        "000000000263.jpg",
+        "000000000597.jpg",
+        "000000000312.jpg",
+        "000000000208.jpg"
+      ]
+    },
+    {
+      "query": "有熊的图片",
+      "available_relevant": 1,
+      "correct_in_top5": 1,
+      "maximum_possible_correct_in_top5": 1,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000502.jpg",
+        "000000000491.jpg",
+        "000000000623.jpg",
+        "000000000581.jpg",
+        "000000000309.jpg"
+      ]
+    },
+    {
+      "query": "有斑马的图片",
+      "available_relevant": 2,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 2,
+      "found_any": true,
+      "available_top5_fraction": 1.0,
+      "top5": [
+        "000000000154.jpg",
+        "000000000034.jpg",
+        "000000000643.jpg",
+        "000000000208.jpg",
+        "000000000581.jpg"
+      ]
+    },
+    {
+      "query": "有长颈鹿的图片",
+      "available_relevant": 4,
+      "correct_in_top5": 2,
+      "maximum_possible_correct_in_top5": 4,
+      "found_any": true,
+      "available_top5_fraction": 0.5,
+      "top5": [
+        "000000000154.jpg",
+        "000000000208.jpg",
+        "000000000643.jpg",
+        "000000000072.jpg",
+        "000000000025.jpg"
+      ]
+    },
+    {
+      "query": "有背包的图片",
+      "available_relevant": 4,
+      "correct_in_top5": 0,
+      "maximum_possible_correct_in_top5": 4,
+      "found_any": false,
+      "available_top5_fraction": 0.0,
+      "top5": [
+        "000000000572.jpg",
+        "000000000643.jpg",
+        "000000000260.jpg",
+        "000000000143.jpg",
+        "000000000241.jpg"
+      ]
+    }
+  ]
+}

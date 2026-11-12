@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+{
+  "status": "PASS",
+  "scope": "isolated 2-image stopped-writer backup, mock vectors; not production-scale restore",
+  "tables": {
+    "assets": 2,
+    "visual_items": 2,
+    "tags": 0,
+    "video_descriptions": 0,
+    "asset_trash": 1
+  },
+  "media_hashes_equal": true,
+  "integrity_check": "ok",
+  "search_before_restore": 1,
+  "search_after_restore": 2
+}
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 633, in _rmtree_unsafe
+    os.unlink(fullname)
+PermissionError: [WinError 32] ��һ����������ʹ�ô��ļ��������޷����ʡ�: 'C:\\Users\\MACHEN~1\\AppData\\Local\\Temp\\tmpqmddmsuy\\restored\\library.sqlite3'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\WORKSPACE\practice\objectlift\docs\evidence\qa-2026-11-12\backup_exercise.py", line 9, in <module>
+    with tempfile.TemporaryDirectory() as tmp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\tempfile.py", line 1029, in __exit__
+    self.cleanup()
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\tempfile.py", line 1033, in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\tempfile.py", line 1013, in _rmtree
+    _shutil.rmtree(name, onexc=onexc, dir_fd=dir_fd, _onexc_kwargs=True)
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 788, in rmtree
+    return _rmtree_unsafe(path, onexc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\shutil.py", line 635, in _rmtree_unsafe
+    onexc(os.unlink, fullname, err)
+  File "D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\tempfile.py", line 980, in onexc
+    _os.unlink(base, dir_fd=dir_fd)
+PermissionError: [WinError 32] ��һ����������ʹ�ô��ļ��������޷����ʡ�: 'C:\\Users\\MACHEN~1\\AppData\\Local\\Temp\\tmpqmddmsuy\\restored\\library.sqlite3'

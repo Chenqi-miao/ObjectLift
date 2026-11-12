@@ -1,0 +1,140 @@
+test_batch_close_releases_lock_and_busy_batch_rejected (test_captions.BatchCaptionTests.test_batch_close_releases_lock_and_busy_batch_rejected) ... ok
+test_batch_isolates_failure_and_releases_lock (test_captions.BatchCaptionTests.test_batch_isolates_failure_and_releases_lock) ... ok
+test_image_tags_replace_and_filter (test_captions.CaptionTests.test_image_tags_replace_and_filter) ... ok
+test_sample_persistence_failure_and_recovery (test_captions.CaptionTests.test_sample_persistence_failure_and_recovery) ... ok
+test_unclassified_fallback (test_captions.CaptionTests.test_unclassified_fallback) ... ok
+test_corrupt_and_unsupported (test_images.ImageTests.test_corrupt_and_unsupported) ... ok
+test_crop_padding_and_clipping (test_images.ImageTests.test_crop_padding_and_clipping) ... ok
+test_foreground_validation (test_images.ImageTests.test_foreground_validation) ... ok
+test_invalid_boxes (test_images.ImageTests.test_invalid_boxes) ... ok
+test_orientation_and_resize (test_images.ImageTests.test_orientation_and_resize) ... ok
+test_palette_transparency (test_images.ImageTests.test_palette_transparency) ... ok
+test_pixel_limit (test_images.ImageTests.test_pixel_limit) ... ok
+test_rgb_composite_does_not_mutate (test_images.ImageTests.test_rgb_composite_does_not_mutate) ... ok
+test_invalid_vectors (test_indexing.IndexTests.test_invalid_vectors) ... ok
+test_query_cache_revision_and_busy (test_indexing.IndexTests.test_query_cache_revision_and_busy) ... ok
+test_retry_only_selected_asset_and_skip_ready (test_indexing.IndexTests.test_retry_only_selected_asset_and_skip_ready) ... ok
+test_retry_persistence_and_revision_isolation (test_indexing.IndexTests.test_retry_persistence_and_revision_isolation) ... ok
+test_home_brand_and_workbench_routes (test_landing.LandingTests.test_home_brand_and_workbench_routes) ... D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_batch_failure_isolation_and_recovery (test_library.LibraryTests.test_batch_failure_isolation_and_recovery) ... ok
+test_import_duplicate_restart_and_original (test_library.LibraryTests.test_import_duplicate_restart_and_original) ... ok
+test_filters_search_selection_and_empty_search (test_library_page.LibraryPageTests.test_filters_search_selection_and_empty_search) ... D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'theme' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'theme' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'css' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'css' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'head' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'head' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The default value of 'padding' in gr.HTML will be changed from True to False in Gradio 6.0. You will need to explicitly set padding=True if you want to keep the padding.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The 'show_copy_button' parameter will be removed in Gradio 6.0. You will need to use 'buttons=["copy"]' instead.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: Passing a tuple to 'row_count' will be removed in Gradio 6.0. You will need to use 'row_count' for the initial row count and 'row_limits' for min/max constraints instead. For example, row_count=(5, 'fixed') should become row_count=5, row_limits=(5, 5).
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: Passing a tuple to 'row_count' will be removed in Gradio 6.0. You will need to use 'row_count' for the initial row count and 'row_limits' for min/max constraints instead. For example, row_count=(5, 'fixed') should become row_count=5, row_limits=(5, 5).
+  return fn(self, **kwargs)
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_tag_diagnostics_include_unindexed_and_missing_images (test_library_page.LibraryPageTests.test_tag_diagnostics_include_unindexed_and_missing_images) ... D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'theme' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'theme' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'css' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'css' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'head' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'head' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The default value of 'padding' in gr.HTML will be changed from True to False in Gradio 6.0. You will need to explicitly set padding=True if you want to keep the padding.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The 'show_copy_button' parameter will be removed in Gradio 6.0. You will need to use 'buttons=["copy"]' instead.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: Passing a tuple to 'row_count' will be removed in Gradio 6.0. You will need to use 'row_count' for the initial row count and 'row_limits' for min/max constraints instead. For example, row_count=(5, 'fixed') should become row_count=5, row_limits=(5, 5).
+  return fn(self, **kwargs)
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_recycle_and_restore_preserve_files_and_index (test_trash.TrashTests.test_recycle_and_restore_preserve_files_and_index) ... D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'theme' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'theme' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'css' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'css' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'head' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'head' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The default value of 'padding' in gr.HTML will be changed from True to False in Gradio 6.0. You will need to explicitly set padding=True if you want to keep the padding.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The 'show_copy_button' parameter will be removed in Gradio 6.0. You will need to use 'buttons=["copy"]' instead.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: Passing a tuple to 'row_count' will be removed in Gradio 6.0. You will need to use 'row_count' for the initial row count and 'row_limits' for min/max constraints instead. For example, row_count=(5, 'fixed') should become row_count=5, row_limits=(5, 5).
+  return fn(self, **kwargs)
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_decode_failure_does_not_register_asset (test_video.VideoTests.test_decode_failure_does_not_register_asset) ... ok
+test_duration_boundary_and_frame_limit (test_video.VideoTests.test_duration_boundary_and_frame_limit) ... ok
+test_import_index_merge_and_persistence (test_video.VideoTests.test_import_index_merge_and_persistence) ... D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'theme' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'theme' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'css' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'css' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\WORKSPACE\practice\objectlift\ui\workbench.py:92: DeprecationWarning: The 'head' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'head' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� �زĹ���̨', theme=gr.themes.Soft(primary_hue='indigo'), css=CSS, head='<link rel="icon" type="image/png" href="/favicon.ico">') as page:
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The default value of 'padding' in gr.HTML will be changed from True to False in Gradio 6.0. You will need to explicitly set padding=True if you want to keep the padding.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: The 'show_copy_button' parameter will be removed in Gradio 6.0. You will need to use 'buttons=["copy"]' instead.
+  return fn(self, **kwargs)
+D:\WORKSPACE\practice\objectlift\.venv\Lib\site-packages\gradio\component_meta.py:189: DeprecationWarning: Passing a tuple to 'row_count' will be removed in Gradio 6.0. You will need to use 'row_count' for the initial row count and 'row_limits' for min/max constraints instead. For example, row_count=(5, 'fixed') should become row_count=5, row_limits=(5, 5).
+  return fn(self, **kwargs)
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_callbacks_clear_stale_results_on_failure_and_new_upload (test_web.WebTests.test_callbacks_clear_stale_results_on_failure_and_new_upload) ... D:\WORKSPACE\practice\objectlift\ui\page.py:19: DeprecationWarning: The 'theme' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'theme' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� ͼƬ�� 3D', theme=gr.themes.Soft(
+D:\WORKSPACE\practice\objectlift\ui\page.py:19: DeprecationWarning: The 'css' parameter in the Blocks constructor will be removed in Gradio 6.0. You will need to pass 'css' to Blocks.launch() instead.
+  with gr.Blocks(title='ObjectLift �� ͼƬ�� 3D', theme=gr.themes.Soft(
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+D:\tools\dev\python\cpython-3.12-windows-x86_64-none\Lib\asyncio\base_events.py:730: ResourceWarning: unclosed event loop <ProactorEventLoop running=False closed=False debug=False>
+  _warn(f"unclosed event loop {self!r}", ResourceWarning, source=self)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_invalid_foreground_does_not_create_result (test_workspace.WorkspaceTests.test_invalid_foreground_does_not_create_result) ... ok
+test_pipeline_preserves_parent_and_isolates_results (test_workspace.WorkspaceTests.test_pipeline_preserves_parent_and_isolates_results) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 5.927s
+
+OK
+new /workbench

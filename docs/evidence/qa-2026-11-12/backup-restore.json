@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "scope": "isolated 2-image stopped-writer backup, mock vectors; not production-scale restore",
+  "tables": {
+    "assets": 2,
+    "visual_items": 2,
+    "tags": 0,
+    "video_descriptions": 0,
+    "asset_trash": 1
+  },
+  "media_hashes_equal": true,
+  "integrity_check": "ok",
+  "search_before_restore": 1,
+  "search_after_restore": 2
+}
